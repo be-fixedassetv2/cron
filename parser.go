@@ -33,8 +33,9 @@ var places = []ParseOption{
 	Hour,
 	Dom,
 	Month,
-	Dow,
 	Year,
+	Dow,
+	Descriptor,
 }
 
 var defaults = []string{
@@ -115,14 +116,16 @@ func (p Parser) Parse(spec string) (Schedule, error) {
 	fields := strings.Fields(spec)
 
 	// Validate & fill in any omitted or optional fields
+	//dont know why but it causes extra element which is unneeded
 	var err error
-	fields, err = normalizeFields(fields, p.options)
-	if err != nil {
-		return nil, err
-	}
+	// fields, err = normalizeFields(fields, p.options)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	field := func(field string, r bounds) uint64 {
 		if err != nil {
+			fmt.Printf("error %v \n", err)
 			return 0
 		}
 		var bits uint64
@@ -239,6 +242,7 @@ func ParseStandard(standardSpec string) (Schedule, error) {
 func getField(field string, r bounds) (uint64, error) {
 	var bits uint64
 	ranges := strings.FieldsFunc(field, func(r rune) bool { return r == ',' })
+
 	for _, expr := range ranges {
 		bit, err := getRange(expr, r)
 		if err != nil {
