@@ -217,16 +217,8 @@ func normalizeFields(fields []string, options ParseOption) ([]string, error) {
 	return expandedFields, nil
 }
 
-var yearParser = NewParser(
-	Minute | Hour | Dom | Month | Dow | Year | Descriptor,
-)
-
-func ParseWithYear(spec string) (Schedule, error) {
-	return yearParser.Parse(spec)
-}
-
 var standardParser = NewParser(
-	Minute | Hour | Dom | Month | Dow | Descriptor,
+	Minute | Hour | Dom | Month | Year | Dow | Descriptor,
 )
 
 // ParseStandard returns a new crontab schedule representing the given
