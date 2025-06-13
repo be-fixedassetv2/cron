@@ -7,7 +7,7 @@ Cron V3 has been released!
 
 To download the specific tagged release, run:
 
-    go get github.com/be-fixedassetv2/cron/v3@v3.0.0
+    go get github.com/be-fixedassetv2/cron/v3@v3.0.2
 
 Import it in your program as:
 
