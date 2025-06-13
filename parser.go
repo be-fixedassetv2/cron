@@ -23,6 +23,7 @@ const (
 	Month                                  // Month field, default *
 	Dow                                    // Day of week field, default *
 	DowOptional                            // Optional day of week field, default *
+	Year                                   // Year
 	Descriptor                             // Allow descriptors such as @monthly, @weekly, etc.
 )
 
@@ -32,7 +33,9 @@ var places = []ParseOption{
 	Hour,
 	Dom,
 	Month,
+	Year,
 	Dow,
+	Descriptor,
 }
 
 var defaults = []string{
@@ -56,18 +59,17 @@ type Parser struct {
 //
 // Examples
 //
-//  // Standard parser without descriptors
-//  specParser := NewParser(Minute | Hour | Dom | Month | Dow)
-//  sched, err := specParser.Parse("0 0 15 */3 *")
+//	// Standard parser without descriptors
+//	specParser := NewParser(Minute | Hour | Dom | Month | Dow)
+//	sched, err := specParser.Parse("0 0 15 */3 *")
 //
-//  // Same as above, just excludes time fields
-//  specParser := NewParser(Dom | Month | Dow)
-//  sched, err := specParser.Parse("15 */3 *")
+//	// Same as above, just excludes time fields
+//	subsParser := NewParser(Dom | Month | Dow)
+//	sched, err := specParser.Parse("15 */3 *")
 //
-//  // Same as above, just makes Dow optional
-//  specParser := NewParser(Dom | Month | DowOptional)
-//  sched, err := specParser.Parse("15 */3")
-//
+//	// Same as above, just makes Dow optional
+//	subsParser := NewParser(Dom | Month | DowOptional)
+//	sched, err := specParser.Parse("15 */3")
 func NewParser(options ParseOption) Parser {
 	optionals := 0
 	if options&DowOptional > 0 {
@@ -114,14 +116,16 @@ func (p Parser) Parse(spec string) (Schedule, error) {
 	fields := strings.Fields(spec)
 
 	// Validate & fill in any omitted or optional fields
+	//dont know why but it causes extra element which is unneeded
 	var err error
-	fields, err = normalizeFields(fields, p.options)
-	if err != nil {
-		return nil, err
-	}
+	// fields, err = normalizeFields(fields, p.options)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	field := func(field string, r bounds) uint64 {
 		if err != nil {
+			fmt.Printf("error %v \n", err)
 			return 0
 		}
 		var bits uint64
@@ -136,6 +140,7 @@ func (p Parser) Parse(spec string) (Schedule, error) {
 		dayofmonth = field(fields[3], dom)
 		month      = field(fields[4], months)
 		dayofweek  = field(fields[5], dow)
+		year       = field(fields[6], year)
 	)
 	if err != nil {
 		return nil, err
@@ -149,6 +154,7 @@ func (p Parser) Parse(spec string) (Schedule, error) {
 		Month:    month,
 		Dow:      dayofweek,
 		Location: loc,
+		Year:     year,
 	}, nil
 }
 
@@ -215,7 +221,7 @@ func normalizeFields(fields []string, options ParseOption) ([]string, error) {
 }
 
 var standardParser = NewParser(
-	Minute | Hour | Dom | Month | Dow | Descriptor,
+	Minute | Hour | Dom | Month | Year | Dow | Descriptor,
 )
 
 // ParseStandard returns a new crontab schedule representing the given
@@ -236,6 +242,7 @@ func ParseStandard(standardSpec string) (Schedule, error) {
 func getField(field string, r bounds) (uint64, error) {
 	var bits uint64
 	ranges := strings.FieldsFunc(field, func(r rune) bool { return r == ',' })
+
 	for _, expr := range ranges {
 		bit, err := getRange(expr, r)
 		if err != nil {
@@ -247,7 +254,9 @@ func getField(field string, r bounds) (uint64, error) {
 }
 
 // getRange returns the bits indicated by the given expression:
-//   number | number "-" number [ "/" number ]
+//
+//	number | number "-" number [ "/" number ]
+//
 // or error parsing range.
 func getRange(expr string, r bounds) (uint64, error) {
 	var (

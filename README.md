@@ -7,15 +7,11 @@ Cron V3 has been released!
 
 To download the specific tagged release, run:
 
-```bash
-go get github.com/be-fixedassetv2/cron/v3@v3.0.0
-```
+    go get github.com/be-fixedassetv2/cron/v3@v3.0.2
 
 Import it in your program as:
 
-```go
-import "github.com/be-fixedassetv2/cron/v3"
-```
+    import "github.com/be-fixedassetv2/cron/v3"
 
 It requires Go 1.11 or later due to usage of Go Modules.
 
@@ -112,10 +108,8 @@ cron.New(cron.WithChain(
   UPDATING: Callers should use `WithLogger` and specify a logger that does not
   discard `Info` logs. For convenience, one is provided that wraps `*log.Logger`:
 
-```go
-cron.New(
-  cron.WithLogger(cron.VerbosePrintfLogger(logger)))
-```
+      cron.New(
+          cron.WithLogger(cron.VerbosePrintfLogger(logger)))
 
 ### Background - Cron spec format
 
