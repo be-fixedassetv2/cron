@@ -1,5 +1,5 @@
-[![GoDoc](http://godoc.org/github.com/robfig/cron?status.png)](http://godoc.org/github.com/robfig/cron)
-[![Build Status](https://travis-ci.org/robfig/cron.svg?branch=master)](https://travis-ci.org/robfig/cron)
+[![GoDoc](http://godoc.org/github.com/be-fixedassetv2/cron?status.png)](http://godoc.org/github.com/be-fixedassetv2/cron)
+[![Build Status](https://travis-ci.org/be-fixedassetv2/cron.svg?branch=master)](https://travis-ci.org/be-fixedassetv2/cron)
 
 # cron
 
@@ -7,16 +7,16 @@ Cron V3 has been released!
 
 To download the specific tagged release, run:
 
-	go get github.com/robfig/cron/v3@v3.0.0
+    go get github.com/be-fixedassetv2/cron/v3@v3.0.0
 
 Import it in your program as:
 
-	import "github.com/robfig/cron/v3"
+    import "github.com/be-fixedassetv2/cron/v3"
 
 It requires Go 1.11 or later due to usage of Go Modules.
 
 Refer to the documentation here:
-http://godoc.org/github.com/robfig/cron
+http://godoc.org/github.com/be-fixedassetv2/cron
 
 The rest of this document describes the the advances in v3 and a list of
 breaking changes for users that wish to upgrade from an earlier version.
@@ -33,9 +33,10 @@ the timezone support, and fixes a number of bugs.
 New features:
 
 - Support for Go modules. Callers must now import this library as
-  `github.com/robfig/cron/v3`, instead of `gopkg.in/...`
+  `github.com/be-fixedassetv2/cron/v3`, instead of `gopkg.in/...`
 
 - Fixed bugs:
+
   - 0f01e6b parser: fix combining of Dow and Dom (#70)
   - dbf3220 adjust times when rolling the clock forward to handle non-existent midnight (#157)
   - eeecf15 spec_test.go: ensure an error is returned on 0 increment (#144)
@@ -105,7 +106,6 @@ It is backwards incompatible with both v1 and v2. These updates are required:
 
       cron.New(
           cron.WithLogger(cron.VerbosePrintfLogger(logger)))
-
 
 ### Background - Cron spec format
 
